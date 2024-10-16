@@ -54,9 +54,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## About the Author
 
 Created with ❤️ by [Ali Hamza Kamboh](https://alihamzakamboh.com/)
-
-## Acknowledgments
-
-- [Vercel](https://vercel.com) for the amazing deployment platform
-- [Next.js](https://nextjs.org) for the powerful React framework
-- [OpenAI](https://openai.com) for the AI capabilities
