@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { motion, AnimatePresence } from "framer-motion"
 
 mermaid.initialize({ startOnLoad: true })
@@ -21,42 +22,19 @@ mermaid.initialize({ startOnLoad: true })
 const defaultPrompts = [
   {
     name: "Simple Flowchart",
-    prompt: "Create a simple flowchart with three steps: Start, Process, and End.",
-    code: `graph TD
-    A[Start] --> B[Process]
-    B --> C[End]`
+    prompt: "Create a simple flowchart with three steps: Start, Process, and End."
   },
   {
     name: "Basic Sequence Diagram",
-    prompt: "Generate a sequence diagram showing interaction between a user, a web server, and a database.",
-    code: `sequenceDiagram
-    participant User
-    participant Server
-    participant DB
-    User->>Server: Request Data
-    Server->>DB: Query
-    DB->>Server: Return Data
-    Server->>User: Send Response`
+    prompt: "Generate a sequence diagram showing interaction between a user, a web server, and a database."
   },
   {
     name: "Organization Chart",
-    prompt: "Create an organization chart for a small company with a CEO, CTO, and CFO, each with two direct reports.",
-    code: `graph TD
-    CEO[CEO] --> CTO[CTO]
-    CEO --> CFO[CFO]
-    CTO --> Dev1[Developer 1]
-    CTO --> Dev2[Developer 2]
-    CFO --> Acc1[Accountant 1]
-    CFO --> Acc2[Accountant 2]`
+    prompt: "Create an organization chart for a small company with a CEO, CTO, and CFO, each with two direct reports."
   },
   {
     name: "State Diagram",
-    prompt: "Design a state diagram for a traffic light system with three states: Red, Yellow, and Green.",
-    code: `stateDiagram-v2
-    [*] --> Red
-    Red --> Green
-    Green --> Yellow
-    Yellow --> Red`
+    prompt: "Design a state diagram for a traffic light system with three states: Red, Yellow, and Green."
   }
 ]
 
@@ -78,7 +56,7 @@ const generateAIGraph = async (prompt: string): Promise<string> => {
 }
 
 export function MermaidGraphGenerator() {
-  const [mermaidCode, setMermaidCode] = useState(defaultPrompts[0].code)
+  const [mermaidCode, setMermaidCode] = useState('')
   const [svg, setSvg] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -198,42 +176,28 @@ export function MermaidGraphGenerator() {
     setPosition(prev => ({ x: prev.x + dx, y: prev.y + dy }))
   }
 
-  const handleSelectPrompt = (prompt: typeof defaultPrompts[0]) => {
-    setMermaidCode(prompt.code)
-
-    renderMermaid()
+  const handleSelectPrompt = (value: string) => {
+    const selectedPrompt = defaultPrompts.find(p => p.name === value)
+    if (selectedPrompt) {
+      setAIPrompt(selectedPrompt.prompt)
+    }
   }
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
-      <Card className="bg-gradient-to-r from-[#1A1A1A] to-[#2A2A2A] p-[2px] rounded-md shadow-[0px_0px_85px_0px_rgba(138,43,226,0.2)]">
-        <CardContent className="rounded-md bg-black p-8">
-          <CardTitle className="text-3xl lg:text-4xl font-bold text-white text-start">Text To Graph</CardTitle>
-          <CardDescription className="text-lg text-gray-400 text-start my-3">Create beautiful diagrams with AI assistance and export in high quality</CardDescription>
-          
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2 text-white">Default Prompts:</h3>
-            <div className="flex flex-wrap gap-2">
-              {defaultPrompts.map((prompt, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  onClick={() => handleSelectPrompt(prompt)}
-                  className="text-sm bg-gray-800 text-white border-gray-700 hover:bg-gray-700"
-                >
-                  {prompt.name}
-                </Button>
-              ))}
-            </div>
-          </div>
-
+      <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Mermaid Graph Generator</CardTitle>
+          <CardDescription>Create beautiful diagrams with AI assistance and export in high quality</CardDescription>
+        </CardHeader>
+        <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-800">
-              <TabsTrigger value="code" className="flex items-center gap-2 text-white data-[state=active]:bg-purple-700">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="code" className="flex items-center gap-2">
                 <Code className="w-4 h-4" />
                 Code
               </TabsTrigger>
-              <TabsTrigger value="preview" className="flex items-center gap-2 text-white data-[state=active]:bg-purple-700">
+              <TabsTrigger value="preview" className="flex items-center gap-2">
                 <Eye className="w-4 h-4" />
                 Preview
               </TabsTrigger>
@@ -243,7 +207,7 @@ export function MermaidGraphGenerator() {
                 value={mermaidCode}
                 onChange={(e) => setMermaidCode(e.target.value)}
                 placeholder="Enter Mermaid syntax here..."
-                className="font-mono min-h-[300px] resize-y bg-gray-900 text-white border-gray-700"
+                className="font-mono min-h-[300px] resize-y bg-background/50 backdrop-blur-sm"
               />
             </TabsContent>
             <TabsContent value="preview" className="mt-0">
@@ -302,43 +266,40 @@ export function MermaidGraphGenerator() {
               </AnimatePresence>
             </TabsContent>
           </Tabs>
-          
-          <div className="flex flex-wrap gap-2 mt-6">
-            <Button onClick={renderMermaid} className="bg-purple-700 hover:bg-purple-600 text-white rounded-md py-2">
+          <div className="flex flex-wrap gap-2 mt-4">
+            <Button onClick={renderMermaid} variant="secondary" className="shadow-md hover:shadow-lg transition-shadow">
               Generate Graph
             </Button>
-            <Button onClick={() => setShowAIPrompt(true)} disabled={isLoading} className="bg-blue-700 hover:bg-blue-600 text-white rounded-md py-2">
+            <Button onClick={() => setShowAIPrompt(true)} disabled={isLoading} className="bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-md hover:shadow-lg transition-all">
               <Wand2 className="mr-2 h-4 w-4" />
               AI Generate
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" disabled={!svg} className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700">
+                <Button variant="outline" disabled={!svg} className="shadow-md hover:shadow-lg transition-shadow">
                   <Download className="mr-2 h-4 w-4" />
                   Download
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-gray-800 text-white border-gray-700">
-                <DropdownMenuItem onSelect={() => handleDownload('svg')} className="hover:bg-gray-700">
+              <DropdownMenuContent>
+                <DropdownMenuItem onSelect={() => handleDownload('svg')}>
                   Download as SVG
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => handleDownload('png')} className="hover:bg-gray-700">
+                <DropdownMenuItem onSelect={() => handleDownload('png')}>
                   Download as Full HD PNG
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => handleDownload('png-transparent')} className="hover:bg-gray-700">
+                <DropdownMenuItem onSelect={() => handleDownload('png-transparent')}>
                   Download as Full HD PNG (Transparent)
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          
           <AnimatePresence>
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                
                 transition={{ duration: 0.3 }}
                 className="flex items-center gap-2 text-destructive mt-4 p-2 rounded-md bg-destructive/10"
                 role="alert"
@@ -350,47 +311,34 @@ export function MermaidGraphGenerator() {
           </AnimatePresence>
         </CardContent>
       </Card>
-
-      {/* Add the footer here */}
-      <footer className="mt-8 text-center text-gray-400">
-        <div className="flex items-center justify-center space-x-2">
-          <img
-            src="https://avatars.githubusercontent.com/u/123060177?v=4"
-            alt="ahkamboh"
-            className="w-8 h-8 rounded-full"
-          />
-          <p>
-            Made with ❤️ by{' '}
-            <a
-              href="https://alihamzakamboh.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-purple-400 hover:text-purple-300 transition-colors"
-            >
-              ahkamboh
-            </a>
-          </p>
-        </div>
-      </footer>
-
       <Dialog open={showAIPrompt} onOpenChange={setShowAIPrompt}>
-        <DialogContent className="sm:max-w-[425px] bg-gray-900 border-2 border-gray-700 rounded-md">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-white">Generate AI Graph</DialogTitle>
+            <DialogTitle>Generate AI Graph</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
+            <Select onValueChange={handleSelectPrompt}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a default prompt" />
+              </SelectTrigger>
+              <SelectContent>
+                {defaultPrompts.map((prompt, index) => (
+                  <SelectItem key={index} value={prompt.name}>{prompt.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Textarea
               value={aiPrompt}
               onChange={(e) => setAIPrompt(e.target.value)}
-              placeholder="Describe the graph you want to generate..."
-              className="font-mono min-h-[100px] resize-y bg-gray-800 text-white border-gray-700"
+              placeholder="Describe the  graph you want to generate..."
+              className="font-mono min-h-[100px] resize-y"
             />
           </div>
           <DialogFooter>
-            <Button onClick={() => setShowAIPrompt(false)} variant="outline" className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700">
+            <Button onClick={() => setShowAIPrompt(false)} variant="outline">
               Cancel
             </Button>
-            <Button onClick={handleAIGenerate} disabled={isLoading} className="bg-purple-700 hover:bg-purple-600 text-white">
+            <Button onClick={handleAIGenerate} disabled={isLoading} className="bg-gradient-to-r from-primary to-secondary text-primary-foreground">
               {isLoading ? 'Generating...' : 'Generate'}
             </Button>
           </DialogFooter>
