@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import mermaid from 'mermaid'
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
 import { AlertCircle, Download, Wand2, Code, Eye, Plus, Minus, Move } from "lucide-react"
 import {
   DropdownMenu,
@@ -77,7 +77,7 @@ const generateAIGraph = async (prompt: string): Promise<string> => {
   return data.mermaidCode;
 }
 
-export function MermaidGraphGenerator() {
+function MermaidGraphGenerator() {
   const [mermaidCode, setMermaidCode] = useState(defaultPrompts[0].code)
   const [svg, setSvg] = useState('')
   const [error, setError] = useState('')
@@ -119,7 +119,7 @@ export function MermaidGraphGenerator() {
       setShowAIPrompt(false)
       setAIPrompt('')
       setActiveTab('preview')
-    } catch (error) {
+    } catch {
       setError('Failed to generate AI graph. Please try again.')
     } finally {
       setIsLoading(false)
