@@ -55,7 +55,7 @@ const generateAIGraph = async (prompt: string): Promise<string> => {
   return data.mermaidCode;
 }
 
-export function MermaidGraphGenerator() {
+function MermaidGraphGenerator() {
   const [mermaidCode, setMermaidCode] = useState('')
   const [svg, setSvg] = useState('')
   const [error, setError] = useState('')
@@ -97,7 +97,7 @@ export function MermaidGraphGenerator() {
       setShowAIPrompt(false)
       setAIPrompt('')
       setActiveTab('preview')
-    } catch (error) {
+    } catch {
       setError('Failed to generate AI graph. Please try again.')
     } finally {
       setIsLoading(false)

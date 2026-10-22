@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
 import Groq from "groq-sdk";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+function createGroqClient() {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+  return new Groq({ apiKey });
+}
 
 function sanitizeMermaidCode(code: string): string {
   let sanitized = code
@@ -28,6 +34,11 @@ function sanitizeMermaidCode(code: string): string {
 }
 
 export async function POST(request: Request) {
+  const groq = createGroqClient();
+  if (!groq) {
+    return NextResponse.json({ error: 'Failed to generate graph' }, { status: 500 });
+  }
+
   const { prompt } = await request.json();
 
   try {
